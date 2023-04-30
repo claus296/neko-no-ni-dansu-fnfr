@@ -547,6 +547,31 @@ return {
 		enemy = nil
 		boyfriend = nil
 		girlfriend = nil
+		sky = nil
+		hills = nil
+		trees = nil
+		ground = nil
+		hud = nil
+		skyEvil = nil
+		hillsEvil = nil
+		treesEvil = nil
+		groundEvil = nil
+		hudEvil = nil
+		warning = nil
+		skyHell = nil
+		hillsHell = nil
+		pillarsHell = nil
+		foregroundHell = nil
+		overlay = nil
+		jumpscare = nil
+		nyanyo = nil
+		bfNormal = nil
+		bfScared = nil
+		nyanyoScared = nil
+		nyanyoHell = nil
+		sun = nil
+		sunEvil = nil
+		static = nil
 
 		graphics.clearCache()
 
