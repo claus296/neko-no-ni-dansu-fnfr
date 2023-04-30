@@ -29,29 +29,7 @@ return {
 		if inst then inst:stop() end
 		voices:stop()
 
-		audio.playSound(sounds["death"])
-
-		boyfriend:animate("dies", false)
-
 		Timer.clear()
-
-		Timer.tween(
-			2,
-			camera,
-			{x = -boyfriend.x, y = -boyfriend.y, zoom = camera.defaultZoom},
-			"out-quad",
-			function()
-				if not pixel then
-					inst = love.audio.newSource("music/game-over.ogg", "stream")
-				else
-					inst = love.audio.newSource("music/pixel/game-over.ogg", "stream")
-				end
-				inst:setLooping(true)
-				inst:play()
-
-				boyfriend:animate("dead", true)
-			end
-		)
 	end,
 
 	update = function(self, dt)
@@ -59,7 +37,6 @@ return {
 
 		if input:pressed("confirm") or pauseRestart then
 			pauseRestart = false
-			if inst then inst:stop() end -- In case inst is nil and "confirm" is pressed before game over music starts
 
 			if not pixel then
 				inst = love.audio.newSource("music/game-over-end.ogg", "stream")
@@ -71,8 +48,6 @@ return {
 			Timer.clear()
 
 			camera.x, camera.y = -boyfriend.x, -boyfriend.y
-
-			boyfriend:animate("dead confirm", false)
 
 			graphics.fadeOut(
 				3,
@@ -114,11 +89,6 @@ return {
 				love.graphics.scale(camera.zoom, camera.zoom)
 				love.graphics.translate(camera.x, camera.y)
 
-				if not pixel then
-					boyfriend:draw()
-				else
-					boyfriend:udraw()
-				end
 			love.graphics.pop()
 		love.graphics.pop()
 	end,

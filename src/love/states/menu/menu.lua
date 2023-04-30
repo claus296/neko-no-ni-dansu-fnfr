@@ -11,27 +11,41 @@ local selectSound = love.audio.newSource("sounds/menu/select.ogg", "static")
 local confirmSound = love.audio.newSource("sounds/menu/confirm.ogg", "static")
 local transparency
 
+local difficultyStrs = {
+	"-easy",
+	"",
+	"-hard"
+}
+
 return {
 	enter = function(self, previous)
-		beatHandler.setBPM(102)
-		if not music:isPlaying() then
-			music:play()
-		end
-		function tweenMenu()
-			if logo.y == -300 then 
-				Timer.tween(1, logo, {y = -125}, "out-expo")
-			end
-			if girlfriendTitle.x == 500 then
-				Timer.tween(1, girlfriendTitle, {x = 325}, "out-expo")
-			end
-		end
+		camera.zoom = 1
 
-		function logoRotate()
-			Timer.tween(2, logo, {orientation = 0.15}, "in-out-back", function()
-				Timer.tween(2, logo, {orientation = -0.15}, "in-out-back", function()
-					logoRotate()
-				end)
-			end)
+		beatHandler.setBPM(102)
+		if music:isPlaying() then
+			music:stop()
+		end
+		music:play()
+		function tweenMenu()
+			if logo.y == -500 then 
+				Timer.tween(2, logo, {y = -10}, "out-back")
+			end
+			Timer.after(
+				2, 
+				function()
+					if cat.y == 700 then
+						Timer.tween(1.5, cat, {x = cat.x, y = 200}, "out-back")
+					end
+				end
+			)
+			Timer.after(
+				9,
+				function()
+					if camScaleTimer then Timer.cancel(camScaleTimer) end
+	
+					camScaleTimer = Timer.tween(0.7, camera, {zoom = 1}, "out-expo")
+				end
+			)
 		end
 
 		transparency = {0}
@@ -43,18 +57,60 @@ return {
 		)
 		titleBG = graphics.newImage(graphics.imagePath("menu/titleBG"))
 		changingMenu = false
-		logo = love.filesystem.load("sprites/ve-logo.lua")()
-		
-		girlfriendTitle = love.filesystem.load("sprites/menu/girlfriend-title.lua")()
-		logo:animate("anim", false)
 
-		girlfriendTitle:setAnimSpeed(14.4 / (60 / 102))
+		gradient = graphics.newImage(graphics.imagePath("menu/gradient"))
+		gradient.sizeX, gradient.sizeY = 1.2
 
-		girlfriendTitle.x, girlfriendTitle.y = 500, 65
-		logo.x, logo.y = -350, -300
+		cat = graphics.newImage(graphics.imagePath("menu/cat"))
+		cat.sizeX, cat.sizeY = 1.3
+		cat.x, cat.y = 500, 700
+
+		logo = graphics.newImage(graphics.imagePath("menu/logo"))
+		logo.sizeX, logo.sizeY = 1.2
+		logo.y = -500
+
+		start = graphics.newImage(graphics.imagePath("menu/start"))
+
+		flowers = graphics.newImage(graphics.imagePath("menu/flowers"))
+		flowers.y = 280
+
+		leftArrow = graphics.newImage(graphics.imagePath("menu/left"))
+		leftArrow.x, leftArrow.y = -100, -325
+
+		rightArrow = graphics.newImage(graphics.imagePath("menu/right"))
+		rightArrow.x, rightArrow.y = 80, -325
+
+		options = graphics.newImage(graphics.imagePath("menu/options"))
+		options.x, options.y = 600, -320
+
+		flash = love.filesystem.load("sprites/menu/flash.lua")()
+		flash.sizeX, flash.sizeY = 999
+
+		difficulties = love.filesystem.load("sprites/menu/difficulties.lua")()
+		difficulties.y = -320
 
 		tweenMenu()
-		logoRotate()
+
+		function confirmFunc()
+			music:stop()
+			songNum = 1
+
+			status.setLoading(true)
+
+			graphics:fadeOutWipe(
+				0.7,
+				function()
+					
+					songAppend = difficultyStrs[songDifficulty]
+
+					storyMode = true
+
+					Gamestate.switch(weekData[weekNum], songNum, songAppend, weekNum)
+
+					status.setLoading(false)
+				end
+			)
+		end
 
 		songNum = 0
 
@@ -64,32 +120,88 @@ return {
 		else graphics:fadeInWipe(0.6) end
 
 		firstStartup = false
+		intro = true
 	end,
 
 	update = function(self, dt)
-		girlfriendTitle:update(dt)
-		logo:update(dt)
+		flash:update(dt)
+		difficulties:update(dt)
+	
+		if songDifficulty == 3 then
+			difficulties:animate("hard", false)
+		elseif songDifficulty == 2 then
+			difficulties:animate("normal", false)
+		else
+			difficulties:animate("easy", false)
+		end
+
+		delta = love.timer.getDelta()
+
+		gradient.x = gradient.x - 50 * love.timer.getDelta()
+		start.y = 300 + math.sin(love.timer.getTime() * 6) * 4
+
+		if gradient.x <= -45 then
+			gradient.x = 0
+		end
+
+		Timer.after(
+			2, 
+			function()
+				logo.y = logo.y + math.sin(love.timer.getTime() * 6) * 2
+			end
+		)
+
+		Timer.after(
+			6.7, 
+			function()
+				if intro then
+					camera.zoom = camera.zoom + 0.2 * love.timer.getDelta()
+				end
+			end
+		)
+
+		Timer.after(
+			9,
+			function()
+				if camera.zoom >= 1.2 then
+					flash:animate("anim", false)
+				end
+				intro = false
+			end
+		)
 
 		beatHandler.update(dt)
 
-		if beatHandler.onBeat() then 
-			if logo then logo:animate("anim", false) end
-		end
-
-
 		if not graphics.isFading() then
-			if input:pressed("confirm") then
-				if not changingMenu then
+			if not intro then
+				if input:pressed("confirm") then
 					audio.playSound(confirmSound)
-					changingMenu = true
-					graphics:fadeOutWipe(0.7, function()
-						Gamestate.switch(menuSelect)
-						status.setLoading(false)							
-					end)
+
+					confirmFunc()
+				elseif input:pressed("left") then
+					audio.playSound(selectSound)
+	
+					if songDifficulty ~= 1 then
+						songDifficulty = songDifficulty - 1
+					else
+						songDifficulty = 3 
+					end
+	
+				elseif input:pressed("right") then
+					audio.playSound(selectSound)
+	
+					if songDifficulty ~= 3 then
+						songDifficulty = songDifficulty + 1
+					else
+						songDifficulty = 1
+					end
+				elseif input:pressed("back") then
+					audio.playSound(selectSound)
+					love.event.quit()
+				elseif input:pressed("settings") then
+					audio.playSound(confirmSound)
+					Gamestate.push(menuSettings)
 				end
-			elseif input:pressed("back") then
-				audio.playSound(selectSound)
-				love.event.quit()
 			end
 		end
 	end,
@@ -97,27 +209,56 @@ return {
 	draw = function(self)
 		love.graphics.push()
 			love.graphics.translate(graphics.getWidth() / 2, graphics.getHeight() / 2)
+			love.graphics.scale(camera.zoom, camera.zoom)
 
 			love.graphics.push()
 				love.graphics.push()
+
+				if not intro then
 					titleBG:draw()
+					gradient:draw()
+				end
+				
 				love.graphics.pop()
 				love.graphics.push()
 					love.graphics.scale(0.9, 0.9)
 					logo:draw()
+					if not intro then
+						flowers:draw()
+						start:draw()
+						difficulties:draw()
+						leftArrow:draw()
+						rightArrow:draw()
+						options:draw()
+					end
+					cat:draw()
+
 				love.graphics.pop()
 				love.graphics.push()
 					love.graphics.scale(0.9, 0.9)
-					girlfriendTitle:draw()
+
 				love.graphics.pop()
 			love.graphics.pop()
+			if flash:isAnimated() then
+				flash:draw()
+			end
 
 		love.graphics.pop()
 	end,
 
 	leave = function(self)
-		girlfriendTitle = nil
+		titleBG = nil
+		gradient = nil
 		logo = nil
+		flowers = nil
+		start = nil
+		difficulties = nil
+		leftArrow = nil
+		rightArrow = nil
+		options = nil
+		cat = nil
+		flash = nil
+		camera.zoom = 1
 
 		Timer.clear()
 	end

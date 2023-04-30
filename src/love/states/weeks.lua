@@ -192,7 +192,7 @@ return {
 		end
 		useAltAnims = false
 
-		camera.x, camera.y = -boyfriend.x + 100, -boyfriend.y + 75
+		camera.x, camera.y = -boyfriend.x + 100, -boyfriend.y + 215
 
 		rating.x = 20
 		if not pixel then
@@ -211,8 +211,8 @@ return {
 		enemy:animate("idle")
 		boyfriend:animate("idle")
 
-		if not camera.points["boyfriend"] then camera:addPoint("boyfriend", -boyfriend.x + 100, -boyfriend.y + 75) end
-		if not camera.points["enemy"] then camera:addPoint("enemy", -enemy.x - 100, -enemy.y + 75) end
+		if not camera.points["boyfriend"] then camera:addPoint("boyfriend", -boyfriend.x + 100, -boyfriend.y + 215) end
+		if not camera.points["enemy"] then camera:addPoint("enemy", -enemy.x - 100, -enemy.y + 215) end
 
 		graphics:fadeInWipe(0.6)
 	end,
@@ -872,6 +872,33 @@ return {
 			end
 		end
 
+		if musicTime <= 84000 then
+			if health <= 0.1 then
+				healthGain = true
+			end
+		end
+		if healthGain then
+			if health <= 2 then
+				health = health + 0.5
+			end
+		end
+
+		if musicTime >= 84000 then
+			shakeX = love.math.random(-10, 10)
+			shakeY = love.math.random(-10, 10)
+			enemyIcon.x, enemyIcon.y = -shakeX + 425 - health * 500, 350 + downscrollOffset - shakeY
+			for i = 1, 4 do
+				if settings.middleScroll then
+					enemyArrows[1].x, enemyArrows[1].y = -925 + 165 * 1 + shakeX, -400 + shakeY
+					enemyArrows[2].x, enemyArrows[2].y = -925 + 165 * 2 + shakeX, -400 + shakeY
+					enemyArrows[3].x, enemyArrows[3].y = 100 + 165 * 3 + shakeX, -400 + shakeY
+					enemyArrows[4].x, enemyArrows[4].y = 100 + 165 * 4 + shakeX, -400 + shakeY
+				else
+					enemyArrows[i].x, enemyArrows[i].y = -925 + 165 * i + shakeX, -400 + shakeY
+				end
+			end
+		end
+
 		if (beatHandler.onBeat() and beatHandler.getBeat() % camera.camBopInterval == 0 and camera.zooming and camera.zoom < 1.35 and not camera.locked) then 
 			camera.zoom = camera.zoom + 0.015 * camera.camBopIntensity
 			uiScale.zoom = uiScale.zoom + 0.03 * camera.camBopIntensity
@@ -985,6 +1012,7 @@ return {
 					if combo >= 5 then girlfriend:animate("sad", false) end
 
 					combo = 0
+					self:calculateRating()
 				end
 			end
 
@@ -1092,6 +1120,9 @@ return {
 									end
 									ratingAnim = "shit"
 								end
+
+								rating:animate(ratingAnim, false)
+
 								combo = combo + 1
 								noteCounter = noteCounter + 1
 
@@ -1159,6 +1190,7 @@ return {
 					combo = 0
 					health = health - 0.135
 					misses = misses + 1
+					self:calculateRating()
 				end
 			end
 
@@ -1189,6 +1221,7 @@ return {
 
 		if health > 2 then
 			health = 2
+			healthGain = false
 		elseif health > 0.325 and boyfriendIcon:getAnimName() == "boyfriend losing" then
 			if not pixel then 
 				boyfriendIcon:animate("boyfriend", false)
@@ -1204,7 +1237,9 @@ return {
 			end
 		end
 
-		enemyIcon.x = 425 - health * 500
+		if musicTime <= 84000 then
+			enemyIcon.x = 425 - health * 500
+		end
 		boyfriendIcon.x = 585 - health * 500
 
 		if beatHandler.onBeat() then
@@ -1287,15 +1322,43 @@ return {
 						graphics.setColor(0.6, 0.6, 0.6, 0.6)
 					end
 				end
-				if not pixel then
-					enemyArrows[i]:draw()
-				else
-					if not settings.downscroll then
-						enemyArrows[i]:udraw(8, 8)
-					else
-						enemyArrows[i]:udraw(8, -8)
+
+				if musicTime <= 84000 then
+					love.graphics.setShader()
+				end
+				if musicTime >= 84000 then
+					if musicTime <= 90000 then
+						love.graphics.setShader(invert)
 					end
 				end
+				if musicTime >= 90000 then
+					if musicTime <= 97500 then
+						love.graphics.setShader()
+					end
+				end
+				if musicTime >= 97500 then
+					if musicTime <= 101333.333333333 then
+						love.graphics.setShader(invert)
+					end
+				end
+				if musicTime >= 101333.333333333 then
+					love.graphics.setShader()
+				end
+
+				if musicTime <= 106638.888888889 then
+					if not pixel then
+						enemyArrows[i]:draw()
+					else
+						if not settings.downscroll then
+							enemyArrows[i]:udraw(8, 8)
+						else
+							enemyArrows[i]:udraw(8, -8)
+						end
+					end
+				end
+
+				love.graphics.setShader()
+
 				graphics.setColor(1, 1, 1)
 				if not pixel then 
 					boyfriendArrows[i]:draw()
@@ -1343,19 +1406,46 @@ return {
 									end
 								end
 
-								if not pixel then
-									enemyNotes[i][j]:draw()
-								else
-									if not settings.downscroll then
-										enemyNotes[i][j]:udraw(8, 8)
+								if musicTime <= 84000 then
+									love.graphics.setShader()
+								end
+								if musicTime >= 84000 then
+									if musicTime <= 90000 then
+										love.graphics.setShader(invert)
+									end
+								end
+								if musicTime >= 90000 then
+									if musicTime <= 97500 then
+										love.graphics.setShader()
+									end
+								end
+								if musicTime >= 97500 then
+									if musicTime <= 101333.333333333 then
+										love.graphics.setShader(invert)
+									end
+								end
+								if musicTime >= 101333.333333333 then
+									love.graphics.setShader()
+								end
+
+								if musicTime <= 106638.888888889 then
+									if not pixel then
+										enemyNotes[i][j]:draw()
 									else
-										if enemyNotes[i][j]:getAnimName() == "end" then
+										if not settings.downscroll then
 											enemyNotes[i][j]:udraw(8, 8)
 										else
-											enemyNotes[i][j]:udraw(8, -8)
+											if enemyNotes[i][j]:getAnimName() == "end" then
+												enemyNotes[i][j]:udraw(8, 8)
+											else
+												enemyNotes[i][j]:udraw(8, -8)
+											end
 										end
 									end
 								end
+
+								love.graphics.setShader()
+
 								graphics.setColor(1, 1, 1)
 							end
 						end
@@ -1456,9 +1546,42 @@ return {
 			graphics.setColor(1, 1, 1)
 
 			boyfriendIcon:draw()
+
+			if musicTime <= 84000 then
+				love.graphics.setShader()
+			end
+			if musicTime >= 84000 then
+				if musicTime <= 90000 then
+					love.graphics.setShader(invert)
+				end
+			end
+			if musicTime >= 90000 then
+				if musicTime <= 97500 then
+					love.graphics.setShader()
+				end
+			end
+			if musicTime >= 97500 then
+				if musicTime <= 101333.333333333 then
+					love.graphics.setShader(invert)
+				end
+			end
+			if musicTime >= 101333.333333333 then
+				love.graphics.setShader()
+			end
+
 			enemyIcon:draw()
 
-			self:healthbarText("Score: " .. score .. " | Misses: " .. misses .. " | Accuracy: " .. ((math.floor(ratingPercent * 10000) / 100)) .. "%")
+			love.graphics.setShader()
+
+			if musicTime >= 106666.666666667 then
+				self:healthbarText("" .. score .. " | " .. misses .. " | " .. ((math.floor(ratingPercent * 10000) / 100)) .. "%")
+			elseif musicTime >= 59718.75 then
+				if musicTime <= 106666.666666667 then
+					self:healthbarText("Accuracy: (" .. ((math.floor(ratingPercent * 10000) / 100)) .. "%)")
+				end
+			elseif musicTime <= 59718.75 then
+				self:healthbarText("Awesomeness ^w^ : " .. score .. " | BooBoos ): " .. misses .. " | Rank! : " .. ((math.floor(ratingPercent * 10000) / 100)) .. "%")
+			end
 
 			if settings.botPlay then
 				botplayY = botplayY + math.sin(love.timer.getTime()) * 0.15

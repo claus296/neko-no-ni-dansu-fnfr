@@ -312,7 +312,7 @@ return {
 					if self.heyTimer <= 0 and not self:isAnimated() and not (self:getAnimName() == "dies" or self:getAnimName() == "dead" or self:getAnimName() == "dead confirm" or self:getAnimName() == "danceLeft" or self:getAnimName() == "danceRight") then 
 						self.heyTimer = 0 
 						self.specialAnim = false
-						--self:animate("idle", false) 
+						self:animate("idle", false) 
 					end
 				end
 			end,

@@ -36,6 +36,7 @@ return {
 		love.graphics.push()
 			love.graphics.translate(camera.x, camera.y)
             love.graphics.translate(camera.ex, camera.ey)
+            
 			enemy:draw()
 			boyfriend:draw()
             graphics.setColor(1,1,1)

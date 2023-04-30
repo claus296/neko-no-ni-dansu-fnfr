@@ -181,7 +181,7 @@ function saveSettings()
         graphics:fadeOutWipe(
             0.7,
             function()
-                Gamestate.switch(menuSelect)
+                Gamestate.switch(menu)
                 status.setLoading(false)
             end
         )
@@ -338,14 +338,7 @@ function love.load()
 
 	-- Load stages
 	stages = {
-		["stage"] = require "stages.stage",
-		["hauntedHouse"] = require "stages.hauntedHouse",
-		["city"] = require "stages.city",
-		["sunset"] = require "stages.sunset",
-		["mall"] = require "stages.mall",
-		["school"] = require "stages.school",
-		["evilSchool"] = require "stages.evilSchool",
-		["tank"] = require "stages.tank"
+
 	}
 
 	-- Load Menus
@@ -368,14 +361,7 @@ function love.load()
 
 	-- Load week data
 	weekData = {
-		require "weeks.tutorial",
-		require "weeks.week1",
-		require "weeks.week2",
-		require "weeks.week3",
-		require "weeks.week4",
-		require "weeks.week5",
-		require "weeks.week6",
-		require "weeks.week7"
+		require "weeks.week1"
 	}
 
 	weekDesc = { -- Add your week description here
@@ -474,7 +460,8 @@ function love.load()
 	lovesize.set(1280, 720)
 
 	-- Variables
-	font = love.graphics.newFont("fonts/vcr.ttf", 24)
+	font = love.graphics.newFont("fonts/vcr.ttf", 34)
+	fontSmall = love.graphics.newFont("fonts/vcr.ttf", 24)
 	FNFFont = love.graphics.newFont("fonts/fnFont.ttf", 24)
 	credFont = love.graphics.newFont("fonts/fnFont.ttf", 32)   -- guglio is a bitch 
 	uiFont = love.graphics.newFont("fonts/Dosis-SemiBold.ttf", 32)

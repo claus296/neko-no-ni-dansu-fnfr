@@ -55,7 +55,7 @@ settingsDescriptions2 = {
 
     "Hardware Compression:" ..
     "\n       \"Hardware Compression\" Use hardware-compressed image formats\n       to save RAM, disabling this will make the game eat your RAM\n       for breakfast (and increase load times)" ..
-    "\n\n       WARNING: Don't disable this on 32-bit versions of the game,\n       or the game will quickly run out of memory and crash (thanks\n       to the 2 GB RAM cap)",
+    "\n\n       WARNING: Don't disable this on 32-bit versions of the game,\n       or the game will quickly run out of memory and crash (thanks to the 2 GB RAM cap)",
 
     "Show Debug Info" ..
     "\n       \"Show Debug\" Shows debug info on the screen" ..
@@ -228,6 +228,8 @@ return {
 			love.graphics.push()
                 menuBG:draw()
 
+                love.graphics.setFont(fontSmall)
+
                 graphics.setColor(1,1,0)
                 if settingsMenuState == 0 then
                     love.graphics.print("Gamemodes", -628, -300)
@@ -280,6 +282,8 @@ return {
 
 	leave = function(self)
         saveSettings()
+        love.graphics.setFont(font)
+        menuBG = nil
 
 		Timer.clear()
 	end
