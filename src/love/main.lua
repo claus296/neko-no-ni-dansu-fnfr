@@ -344,11 +344,8 @@ function love.load()
 	-- Load Menus
 	clickStart = require "states.click-start"
 	menu = require "states.menu.menu"
-	menuWeek = require "states.menu.menuWeek"
-	menuFreeplay = require "states.menu.menuFreeplay"
 	menuSettings = require "states.menu.menuSettings"
 	menuCredits = require "states.menu.menuCredits"
-	menuSelect = require "states.menu.menuSelect"
 
 	firstStartup = true
 
@@ -365,87 +362,13 @@ function love.load()
 	}
 
 	weekDesc = { -- Add your week description here
-		"LEARN TO FUNK",
-		"DADDY DEAREST",
-		"SPOOKY MONTH",
-		"PICO",
-		"MOMMY MUST MURDER",
-		"RED SNOW",
-		"HATING SIMULATOR FT. MOAWLING",
-		"TANKMAN"
-	}
-
-	weekDesc = { -- Add your week description here
-		"LEARN TO FUNK",
-		"DADDY DEAREST",
-		"SPOOKY MONTH",
-		"PICO",
-		"MOMMY MUST MURDER",
-		"RED SNOW",
-		"HATING SIMULATOR FT. MOAWLING",
-		"TANKMAN"
+		"AMBATAKUM"
 	}
 	weekMeta = { -- Add/remove weeks here
 		{
-			"Tutorial",
+			"Kyatto",
 			{
-				"Tutorial"
-			}
-		},
-		{
-			"Week 1",
-			{
-				"Bopeebo",
-				"Fresh",
-				"Dadbattle"
-			}
-		},
-		{
-			"Week 2",
-			{
-				"Spookeez",
-				"South",
-				"Monster"
-			}
-		},
-		{
-			"Week 3",
-			{
-				"Pico",
-				"Philly Nice",
-				"Blammed"
-			}
-		},
-		{
-			"Week 4",
-			{
-				"Satin Panties",
-				"High",
-				"M.I.L.F"
-			}
-		},
-		{
-			"Week 5",
-			{
-				"Cocoa",
-				"Eggnog",
-				"Winter Horrorland"
-			}
-		},
-		{
-			"Week 6",
-			{
-				"Senpai",
-				"Roses",
-				"Thorns"
-			},
-		},
-		{
-			"Week 7",
-			{
-				"Ugh",
-				"Guns",
-				"Stress"
+				"Kyatto"
 			}
 		}
 	}

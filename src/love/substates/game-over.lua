@@ -26,55 +26,73 @@ return {
 
 		fromState = from
 
+		scream = love.audio.newSource("sounds/scream.ogg", "static")
+
+		jumpscare = graphics.newImage(graphics.imagePath("kyatto/hell/jumpscare"))
+		jumpscare.sizeX, jumpscare.sizeY = 1.1
+
 		if inst then inst:stop() end
 		voices:stop()
+
+		if musicTime >= 106666.666666667 then
+			if not pauseRestart then
+				scream:play()
+			end
+		end
 
 		Timer.clear()
 	end,
 
 	update = function(self, dt)
 		local boyfriend = fakeBoyfriend or boyfriend
+			
+		if not scream:isPlaying() then
+			if input:pressed("confirm") or pauseRestart then
+				pauseRestart = false
 
-		if input:pressed("confirm") or pauseRestart then
-			pauseRestart = false
-
-			if not pixel then
-				inst = love.audio.newSource("music/game-over-end.ogg", "stream")
-			else
-				inst = love.audio.newSource("music/pixel/game-over-end.ogg", "stream")
-			end
-			inst:play()
-
-			Timer.clear()
-
-			camera.x, camera.y = -boyfriend.x, -boyfriend.y
-
-			graphics.fadeOut(
-				3,
-				function()
-					Gamestate.pop()
-
-					fromState:load()
+				if not pixel then
+					inst = love.audio.newSource("music/game-over-end.ogg", "stream")
+				else
+					inst = love.audio.newSource("music/pixel/game-over-end.ogg", "stream")
 				end
-			)
-		elseif input:pressed("gameBack") then
-			status.setLoading(true)
+				inst:play()
 
-			graphics:fadeOutWipe(
-				0.7,
-				function()
-					Gamestate.pop()
+				Timer.clear()
 
-					Gamestate.switch(menuWeek)
+				camera.x, camera.y = -boyfriend.x, -boyfriend.y
 
-					status.setLoading(false)
+				graphics.fadeOut(
+					3,
+					function()
+						Gamestate.pop()
 
-					if not music:isPlaying() then
-						music:play()
+						fromState:load()
 					end
-				end
-			)
+				)
+			elseif input:pressed("gameBack") then
+				status.setLoading(true)
+
+				graphics:fadeOutWipe(
+					0.7,
+					function()
+						Gamestate.pop()
+
+						Gamestate.switch(menuWeek)
+
+						status.setLoading(false)
+
+						if not music:isPlaying() then
+							music:play()
+						end
+					end
+				)
+			end
+		else
+			jumpscareShakeX = love.math.random(-20, 20)
+			jumpscareShakeY = love.math.random(-20, 20)
+			jumpscare.x, jumpscare.y = 650 + jumpscareShakeX, 380 + jumpscareShakeY
 		end
+
 
 		boyfriend:update(dt)
 	end,
@@ -91,6 +109,11 @@ return {
 
 			love.graphics.pop()
 		love.graphics.pop()
+
+		if scream:isPlaying() then
+			jumpscare:draw()
+		end
+
 	end,
 
 	leave = function(self)

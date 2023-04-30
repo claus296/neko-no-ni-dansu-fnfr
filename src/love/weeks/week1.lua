@@ -491,7 +491,10 @@ return {
 
 		graphics.setColor(1,1,1)
 		
-		weeks:drawUI()
+		if not paused then
+			weeks:drawUI()
+		end
+
 		if musicTime >= 60718.75 then
 			if musicTime <= 60718.75 + 4500 then
 				warning:draw()
@@ -533,6 +536,10 @@ return {
 			if musicTime <= 144916.666666667 + 500 then
 				static:draw()
 			end
+		end
+
+		if paused then
+			weeks:drawUI()
 		end
 	end,
 
